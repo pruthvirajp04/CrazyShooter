@@ -1170,7 +1170,7 @@ var Sound_lmxg_Mgr = /** @class */ (function () {
             this.bgm.play();
         }
         else {
-            Laya.SoundManager.playMusic(url, 0);
+            // Laya.SoundManager.playMusic(url, 0);
         }
     };
     Sound_lmxg_Mgr.prototype.stopBGM = function () {
