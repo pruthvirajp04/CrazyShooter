@@ -7061,40 +7061,40 @@ var SkinView = /** @class */ (function (_super) {
         var a = "";
         switch (xu) {
             case 0:
-                a = "蓝星队长";
+                a = "Captain blue star";
                 break;
             case 1:
-                a = "粉红紧身衣";
+                a = "Pink tights";
                 break;
             case 2:
-                a = "绅士装";
+                a = "Gentleman's clothing";
                 break;
             case 3:
-                a = "沙滩休闲";
+                a = "Beach leisure";
                 break;
             case 4:
-                a = "太空服";
+                a = "Space suit";
                 break;
             case 5:
-                a = "西装革履";
+                a = "Suits & leather shoes";
                 break;
             case 6:
-                a = "小屁孩X";
+                a = "Little bratX";
                 break;
             case 7:
-                a = "马拟奥";
+                a = "Malio";
                 break;
             case 8:
-                a = "马褂小哥";
+                a = "Mandarin jacket";
                 break;
             case 9:
-                a = "小屁孩V";
+                a = "Little kid V";
                 break;
             case 10:
-                a = "狂蟒突击队";
+                a = "Anaconda Commando";
                 break;
             default:
-                a = "蓝星队长";
+                a = "Captain blue star";
                 break;
         }
         return a;
