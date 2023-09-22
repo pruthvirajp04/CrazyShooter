@@ -6442,7 +6442,7 @@ var GameView = /** @class */ (function (_super) {
         _this._level = null;
         _this._progress = null;
         _this.mArmature = null;
-        _this.tishistr = ["保", "护", "小", "绿", "人", "消", "灭", "其", "他", "人",];
+        _this.tishistr = ["Save green & destroy red", ];
         _this.strnum = 0;
         return _this;
     }
