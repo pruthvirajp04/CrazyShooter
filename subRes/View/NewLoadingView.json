@@ -1,0 +1,31 @@
+{
+  "type": "View",
+  "props": {
+    "zOrder": 99,
+    "width": 750,
+    "top": 0,
+    "right": 0,
+    "left": 0,
+    "height": 1334,
+    "bottom": 0
+  },
+  "compId": 2,
+  "child": [
+    {
+      "type": "Clip",
+      "props": {
+        "width": 750,
+        "top": 0,
+        "skin": "Loading/loader.png",
+        "name": "Bg",
+        "left": 0,
+        "height": 1999.6
+      },
+      "compId": 6
+    }
+  ],
+  "loadList": [
+    "Loading/画板 1.jpg"
+  ],
+  "loadList3D": []
+}

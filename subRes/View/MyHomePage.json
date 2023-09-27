@@ -69,20 +69,20 @@
       "type": "Sprite",
       "props": {
         "y": 38,
-        "x": -1,
+        "x": 10,
         "width": 186,
         "visible": true,
-        "texture": "subRes/Image/123_0010_图层-23-拷贝.png",
+        "texture": "extraAssets/homepageOverlay.png",
         "name": "bgjin",
-        "height": 52
+        "height": 70
       },
       "compId": 5,
       "child": [
         {
           "type": "Sprite",
           "props": {
-            "y": 1,
-            "x": 1,
+            "y": 15,
+            "x": 10,
             "texture": "subRes/Image/123_0009_图层-543.png"
           },
           "compId": 15
@@ -90,8 +90,8 @@
         {
           "type": "Text",
           "props": {
-            "y": 24,
-            "x": 116,
+            "y": 35,
+            "x": 122,
             "width": 127,
             "valign": "middle",
             "text": "99999",

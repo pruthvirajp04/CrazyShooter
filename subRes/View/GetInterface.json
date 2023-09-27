@@ -27,10 +27,11 @@
       "props": {
         "x": 276,
         "width": 197,
-        "skin": "subRes/Image/直接开始.png",
+        "skin": "",
         "name": "Getbtn",
         "height": 79,
-        "bottom": 311
+        "bottom": 311,
+        "visible":"false"
       },
       "compId": 4,
       "child": [
@@ -86,12 +87,10 @@
     {
       "type": "Text",
       "props": {
-        "y": 213,
+        "y": 383,
         "x": 408,
         "width": 67,
         "text": "20",
-        "pivotY": 25,
-        "pivotX": 34,
         "name": "jinbi",
         "italic": true,
         "height": 50,
@@ -142,35 +141,6 @@
           "type": "Script",
           "props": { "runtime": "ShareAd/View/BannerAdView.ts" },
           "compId": 19
-        }
-      ]
-    },
-    {
-      "type": "Image",
-      "props": {
-        "x": 236,
-        "width": 277,
-        "skin": "subRes/Image/三倍领取.png",
-        "name": "sanGetbtn",
-        "height": 120,
-        "bottom": 411
-      },
-      "compId": 20,
-      "child": [
-        {
-          "type": "Script",
-          "props": { "runtime": "View/ButtonAnim.ts" },
-          "compId": 22
-        },
-        {
-          "type": "Sprite",
-          "props": {
-            "y": -31.5,
-            "x": 214,
-            "texture": "subRes/Image/123_0005_图层-895-拷贝-7.png",
-            "name": "ship"
-          },
-          "compId": 24
         }
       ]
     },

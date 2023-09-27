@@ -79,8 +79,8 @@ var AppConfig = /** @class */ (function () {
     function AppConfig() {
     }
     AppConfig.AppID = "wx7fa97aff081578ca";
-    AppConfig.ResServer = "https://oss.renyouwangluo.cn/lmxgg"; //资源服务器地址
-    AppConfig.LocalTestReServer = "https://oss.renyouwangluo.cn/lmxgg"; //本地测试资源服务器地址
+    AppConfig.ResServer = "subRes"; //资源服务器地址
+    AppConfig.LocalTestReServer = "subRes"; //本地测试资源服务器地址
     AppConfig.Versions = "0.0.1";
     return AppConfig;
 }());
@@ -529,59 +529,9 @@ var MaiLiang = /** @class */ (function () {
             req.url = MaiLiang.mainUrl + req.url;
         }
         var completeFunc = function (res) {
-            console.log(res, "MaiLiang http Success");
-            res = JSON.parse(res);
-            if (res.Status == "200") {
-                if (res.Result["OpenId"] != null && res.Result["OpenId"] != "") {
-                    MaiLiang.MaiLiangOpenId = res.Result["OpenId"];
-                    MaiLiang.time = req.data.posttime;
-                    console.log("获得买量系统OpenId " + MaiLiang.MaiLiangOpenId);
-                }
-                else {
-                    console.log("上报买量系统停留时间成功");
-                }
-                if (req.onSuccess) {
-                    req.onSuccess(res);
-                }
-            }
-            else {
-                if (req.onFail) {
-                    req.onFail(res);
-                }
-            }
-            req.onSuccess = null;
-            req = null;
         };
         var errorFunc = function (res) {
-            console.log(res, "MaiLiang http fail");
-            if (req.onFail) {
-                req.onFail(res);
-            }
-            req.onFail = null;
-            req = null;
         };
-        var xhr = new Laya.HttpRequest();
-        xhr.once(Laya.Event.COMPLETE, this, completeFunc);
-        xhr.once(Laya.Event.ERROR, this, errorFunc);
-        if (req.meth == "get") {
-            var para = "";
-            for (var _i = 0, _a = Object.keys(req.data); _i < _a.length; _i++) {
-                var key = _a[_i];
-                var value = req.data[key];
-                para += key + "=" + value + "&";
-            }
-            req.url = req.url + "?" + para;
-            xhr.send(req.url, null, req.meth);
-        }
-        else {
-            var para = "";
-            for (var _b = 0, _c = Object.keys(req.data); _b < _c.length; _b++) {
-                var key = _c[_b];
-                var value = req.data[key];
-                para += key + "=" + value + "&";
-            }
-            xhr.send(req.url, para, req.meth, null, ["Content-Type", "application/x-www-form-urlencoded"]);
-        }
     };
     /**
      * 获得买量系统唯一标识ID,此ID的作用是用来上报游戏时间
@@ -732,7 +682,7 @@ var Main = /** @class */ (function () {
         this._loadingUI.width = Laya.stage.width;
         this._loadingUI.height = Laya.stage.height;
         this._loadingView = this._loadingUI.getComponent(LoadingView_1.default);
-        this._loadingView.setProcess(0);
+        //this._loadingView.setProcess(0);
     };
     Main.prototype.postResToOpenDataContext = function (onComplate) {
         if (Laya.Browser.onMiniGame) {
@@ -762,164 +712,23 @@ var Main = /** @class */ (function () {
         this.preLoad();
         var resource = this._preLoadRes;
         var self = this;
-        if (Laya.Browser.onMiniGame) {
-            //开始加载分包
-            var loadSubResTask = Laya.Browser.window["wx"].loadSubpackage({
-                name: 'subRes',
-                success: function (res) {
-                    // 分包加载成功,开始预加载资源
-                    if (resource.length > 0) {
-                        Laya.loader.load(resource, Laya.Handler.create(_this, function () {
-                            self.onLoadResComplate(); //预加载完成
-                        }), Laya.Handler.create(_this, function (res) {
-                            //todo:跟新进度条
-                            self._loadingView.setProcess(res / 2 + 0.5);
-                        }));
-                    }
-                    else {
-                        self.onLoadResComplate(); //预加载完成
-                    }
-                },
-                fail: function (res) {
-                    _this.loadRes(); //加载失败，重新加载
-                }
-            });
-            loadSubResTask.onProgressUpdate(function (res) {
-                self._loadingView.setProcess(res / 2);
-            });
-        }
-        else if (Laya.Browser.onQGMiniGame) //oppo小游戏
-         {
-            //开始加载分包
-            var loadSubResTask = Laya.Browser.window["qg"].loadSubpackage({
-                name: 'subRes',
-                success: function (res) {
-                    // 分包加载成功,开始预加载资源
-                    if (resource.length > 0) {
-                        Laya.loader.load(resource, Laya.Handler.create(_this, function () {
-                            self.onLoadResComplate(); //预加载完成
-                        }), Laya.Handler.create(_this, function (res) {
-                            //todo:跟新进度条
-                            self._loadingView.setProcess(res / 2 + 0.5);
-                        }));
-                    }
-                    else {
-                        self.onLoadResComplate(); //预加载完成
-                    }
-                },
-                fail: function (res) {
-                    _this.loadRes(); //加载失败，重新加载
-                }
-            });
-            loadSubResTask.onProgressUpdate(function (res) {
-                // 加载进度百分比
-                var progress = res["progress"];
-                // 下载数据
-                var totalBytesWritten = res["totalBytesWritten"];
-                // 总长度
-                var totalBytesExpectedToWrite = res["totalBytesExpectedToWrite"];
-                self._loadingView.setProcess(progress / 2);
-            });
-        }
-        else {
             if (resource.length > 0) {
                 Laya.loader.load(resource, Laya.Handler.create(this, function () {
                     self.onLoadResComplate();
                 }), Laya.Handler.create(this, function (res) {
-                    self._loadingView.setProcess(res);
+                    //self._loadingView.setProcess(res);
                 }));
             }
             else {
                 self.onLoadResComplate();
             }
-        }
     };
     Main.prototype.onLoadResComplate = function () {
         var self = this;
-        this._loadingView.setProcess(1);
-        if (Laya.Browser.onMiniGame) {
-            WXAPI_1.default.wxLogin(function (code) {
-                var _this = this;
-                User_1.default.code = code;
-                HttpUnit_1.default.login(function (res) {
-                    if (res.code == 1) {
-                        console.log("登陆成功！！！");
-                        User_1.default.token = res.data.token;
-                        User_1.default.openId = res.data.openid;
-                        HttpUnit_1.default.getGameData(function (res) {
-                            console.log("获取用户数据成功！！！");
-                            if (1 == res.code) {
-                                User_1.default.initiUser(res.data);
-                            }
-                            else {
-                                User_1.default.initiUser(null);
-                            }
-                            GameConfig_1.default.startScene && Laya.Scene.open(GameConfig_1.default.startScene, false, Laya.Handler.create(_this, function () {
-                            }));
-                        }, function (res) {
-                            console.log("获取用户数据失败！！！");
-                            User_1.default.initiUser(null);
-                            GameConfig_1.default.startScene && Laya.Scene.open(GameConfig_1.default.startScene, false, Laya.Handler.create(_this, function () {
-                            }));
-                        });
-                    }
-                }, function (res) {
-                    console.log("登陆失败！！！" + res);
-                    User_1.default.initiUser(null);
-                    GameConfig_1.default.startScene && Laya.Scene.open(GameConfig_1.default.startScene, false, Laya.Handler.create(_this, function () {
-                    }));
-                });
-            }, null);
-        }
-        else if (Laya.Browser.onQGMiniGame) //oppo小游戏
-         {
-            OPPOAPI_1.default.initAdService(function () {
-            }, function () {
-            }, function () {
-            });
-            OPPOAPI_1.default.Login(function (token) {
-                var _this = this;
-                User_1.default.code = token;
-                HttpUnit_1.default.login(function (res) {
-                    if (res.code == 1) {
-                        console.log("登陆成功！！！");
-                        User_1.default.token = res.data.token;
-                        User_1.default.openId = res.data.openid;
-                        HttpUnit_1.default.getGameData(function (res) {
-                            console.log("获取用户数据成功！！！");
-                            if (1 == res.code) {
-                                User_1.default.initiUser(res.data);
-                                console.log("获取用户数据--------------------Start");
-                                for (var key in res.data) {
-                                    console.log(key, res.data[key]);
-                                }
-                                console.log("获取用户数据--------------------End");
-                            }
-                            else {
-                                User_1.default.initiUser(null);
-                            }
-                            GameConfig_1.default.startScene && Laya.Scene.open(GameConfig_1.default.startScene, false, Laya.Handler.create(_this, function () {
-                            }));
-                        }, function (res) {
-                            console.log("获取用户数据失败！！！");
-                            User_1.default.initiUser(null);
-                            GameConfig_1.default.startScene && Laya.Scene.open(GameConfig_1.default.startScene, false, Laya.Handler.create(_this, function () {
-                            }));
-                        });
-                    }
-                }, function (res) {
-                    console.log("登陆失败！！！", res);
-                    User_1.default.initiUser(null);
-                    GameConfig_1.default.startScene && Laya.Scene.open(GameConfig_1.default.startScene, false, Laya.Handler.create(_this, function () {
-                    }));
-                });
-            }, null);
-        }
-        else {
+        //this._loadingView.setProcess(1);
             User_1.default.testInitUser(); //测试
             GameConfig_1.default.startScene && Laya.Scene.open(GameConfig_1.default.startScene, false, Laya.Handler.create(this, function () {
             }));
-        }
     };
     Main.prototype.closeloadingUI = function () {
         if (this._loadingUI && !this._loadingUI.destroyed) {
@@ -1264,6 +1073,7 @@ var View_lmxg_Def;
     View_lmxg_Def["Skin"] = "subRes/View/Skin.json";
     View_lmxg_Def["CrazyMoreGame"] = "subRes/View/CrazyMoreGame.json";
     View_lmxg_Def["GetInterface"] = "subRes/View/GetInterface.json";
+    View_lmxg_Def["NewLoadingView"] = "subRes/View/NewLoadingView.json";
     //todo:添加你的界面
 })(View_lmxg_Def = exports.View_lmxg_Def || (exports.View_lmxg_Def = {}));
 //界面管理器
@@ -2433,7 +2243,9 @@ var JieSuoShow = /** @class */ (function (_super) {
             this.shipin.visible = false;
             this.jinbi.visible = true;
             var haojin = (_val - 3) * 100;
-            this.jinbitext.text = haojin.toString() + "/" + User_1.default.getMoney();
+            //this.jinbitext.x = -100;
+            //this.jinbitext.y = 600;
+            this.jinbitext.text = haojin.toString();
         }
     };
     return JieSuoShow;
@@ -3934,43 +3746,9 @@ var HttpUnit = /** @class */ (function () {
             req.url = NetConfig_1.default.serverUrl + req.url;
         }
         var completeFunc = function (res) {
-            console.log(res, "http Success");
-            if (req.onSuccess) {
-                req.onSuccess(res);
-            }
-            req.onSuccess = null;
-            req = null;
         };
         var errorFunc = function (res) {
-            console.log(res, "http fail");
-            if (req.onFail) {
-                req.onFail(res);
-            }
-            req.onFail = null;
-            req = null;
         };
-        var xhr = new Laya.HttpRequest();
-        xhr.once(Laya.Event.COMPLETE, this, completeFunc);
-        xhr.once(Laya.Event.ERROR, this, errorFunc);
-        var dataStr = JSON.stringify(req.data);
-        if (Laya.Browser.onMiniGame) {
-            req.data.code = User_1.default.code;
-        }
-        else if (Laya.Browser.onQGMiniGame) {
-            req.data.oppotoken = User_1.default.code;
-        }
-        var time = "time=" + String(Date.now());
-        var header = [
-            "Content-Type", "application/json",
-            "state", NetConfig_1.default.state,
-            "gameid", NetConfig_1.default.gameid,
-            "sign", AesTools_1.default.encrypt(time),
-        ];
-        if (User_1.default.token) {
-            header.push("token");
-            header.push(User_1.default.token);
-        }
-        xhr.send(req.url, JSON.stringify(req.data), req.meth, "json", header);
     };
     //todo:这里添加你们和服务器相互的接口
     HttpUnit.login = function (onSuccess, onFail) {
@@ -4479,51 +4257,9 @@ var Share_lmxg_Ad = /** @class */ (function () {
             req.url = Share_lmxg_Ad.mainUrl + req.url;
         }
         var completeFunc = function (res) {
-            console.log(res, "http Success");
-            res = JSON.parse(res);
-            if (req.onSuccess) {
-                req.onSuccess(res);
-            }
-            req.onSuccess = null;
-            req = null;
         };
         var errorFunc = function (res) {
-            console.log(res, "http fail");
-            if (req.onFail) {
-                req.onFail(res);
-            }
-            req.onFail = null;
-            req = null;
         };
-        var xhr = new Laya.HttpRequest();
-        xhr.once(Laya.Event.COMPLETE, Share_lmxg_Ad, completeFunc);
-        xhr.once(Laya.Event.ERROR, Share_lmxg_Ad, errorFunc);
-        if (req.meth == "get") {
-            var para = "";
-            for (var _i = 0, _a = Object.keys(req.data); _i < _a.length; _i++) {
-                var key = _a[_i];
-                var value = req.data[key];
-                para += key + "=" + value + "&";
-            }
-            req.url = req.url + "?" + para;
-            var header = [
-                "versions", AppConfig_1.default.Versions,
-            ];
-            xhr.send(req.url, null, req.meth, null, header);
-        }
-        else {
-            var para = "";
-            for (var _b = 0, _c = Object.keys(req.data); _b < _c.length; _b++) {
-                var key = _c[_b];
-                var value = req.data[key];
-                para += key + "=" + value + "&";
-            }
-            var header = [
-                "Content-Type", "application/x-www-form-urlencoded",
-                "versions", AppConfig_1.default.Versions,
-            ];
-            xhr.send(req.url, para, req.meth, null, header);
-        }
     };
     Share_lmxg_Ad.get_lmxg_AdPosData = function (onSuccess, onFail) {
         var req = new HttpUnit_1.requestData();
@@ -5559,8 +5295,14 @@ var EventDef_1 = require("../Event/EventDef");
 //游戏数据,为保持版本兼容，建议不要删除和修改字段名
 var UserGameData = /** @class */ (function () {
     function UserGameData() {
-        this.levelNum = 1; //当前关卡
-        this.moneyNum = 0; //金币数量
+        if(localStorage.getItem("CS_Level")){
+            this.levelNum = parseInt(localStorage.getItem("CS_Level"));
+        }
+        else this.moneyNum = 1; //当前关卡
+        if(localStorage.getItem("CS_Money")){
+            this.moneyNum = parseInt(localStorage.getItem("CS_Money"));
+        }
+        else this.moneyNum = 10000; //金币数量
         this.crystalNum = 0; //钻石数量
         this.SkinkNum = 0; //当前玩家的皮肤 
         this.SkinkArrJ = "A"; //当前玩家解锁到的皮肤
@@ -5577,8 +5319,14 @@ var User = /** @class */ (function (_super) {
         return JSON.stringify(User._gameData);
     };
     User.testInitUser = function () {
-        User._gameData.levelNum = 1;
-        User._gameData.moneyNum = 10000;
+        if(localStorage.getItem("CS_Level")){
+            User._gameData.levelNum = parseInt(localStorage.getItem("CS_Level"));
+        }
+        else this.moneyNum = 1; //当前关卡
+        if(localStorage.getItem("CS_Money")){
+           User._gameData.moneyNum = parseInt(localStorage.getItem("CS_Money"));
+        }
+        else this.moneyNum = 10000;
         User._gameData.crystalNum = 10000000;
         User._gameData.SkinkNum = 0;
         User._gameData.SkinkArrJ = "A";
@@ -5630,9 +5378,14 @@ var User = /** @class */ (function (_super) {
     };
     User.setLeveNum = function (levelNum) {
         User._gameData.levelNum += levelNum;
+        localStorage.setItem("CS_Level",User._gameData.levelNum);
     };
     User.getLeveNum = function () {
-        return User._gameData.levelNum;
+        var level = 1;
+        if(localStorage.getItem("CS_Level")){
+            level = parseInt(localStorage.getItem("CS_Level"));
+        }
+        return level;
     };
     User.addMoney = function (add) {
         add = Math.ceil(add);
@@ -5642,6 +5395,7 @@ var User = /** @class */ (function (_super) {
             curr: User._gameData.moneyNum,
             last: last
         });
+        localStorage.setItem("CS_Money",User._gameData.moneyNum);
     };
     User.subMoney = function (sub) {
         sub = Math.ceil(sub);
@@ -5654,9 +5408,14 @@ var User = /** @class */ (function (_super) {
             curr: User._gameData.moneyNum,
             last: last
         });
+        localStorage.setItem("CS_Money",User._gameData.moneyNum);
     };
     User.getMoney = function () {
-        return User._gameData.moneyNum;
+        var money = 10000;
+        if(localStorage.getItem("CS_Money")){
+            money = parseInt(localStorage.getItem("CS_Money"));
+        }
+        return money;
     };
     User.addCrystal = function (add) {
         add = Math.ceil(add);
@@ -6195,12 +5954,7 @@ var CrazyMoreGame = /** @class */ (function (_super) {
         this.gogame.visible = false;
         MyGameManger_1.default.GetInstance().OnlodeScene(function () {
             ViewMgr_2.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.CrazyMoreGame);
-            if (GameMgr_1.default.winfalag) {
-                ViewMgr_2.default.instance.openView(ViewMgr_1.View_lmxg_Def.GetInterface);
-            }
-            else {
                 ViewMgr_2.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameOverView);
-            }
         });
         //this.GoDaQuan();
     };
@@ -6265,6 +6019,14 @@ var GameOverView = /** @class */ (function (_super) {
     }
     GameOverView.prototype.onAwake = function () {
         this._zon = this.owner.getChildByName("zon");
+        this.sangetbtn = this.owner.getChildByName("sanGetbtn");
+        if (GameMgr_1.default.winfalag) {
+            this.sangetbtn.visible = true;
+        }
+        else{
+            this.sangetbtn.visible = false;
+        }
+        this.shipinimg = this.sangetbtn.getChildByName("ship");
         this._morebtn = this.owner.getChildByName("zon").getChildByName("morebtn");
         this._next = this.owner.getChildByName("zon").getChildByName("next");
         this._onceagain = this.owner.getChildByName("zon").getChildByName("onceagain");
@@ -6308,30 +6070,44 @@ var GameOverView = /** @class */ (function (_super) {
         this._morebtn.on(Laya.Event.CLICK, this, this.onMoreBtn);
         this._next.on(Laya.Event.CLICK, this, this.onNextBtn);
         this._onceagain.on(Laya.Event.CLICK, this, this.onOnceagain);
+        this.sangetbtn.on(Laya.Event.CLICK, this, this.onSanGetClick);
     };
     GameOverView.prototype.removeEvent = function () {
         this._morebtn.off(Laya.Event.CLICK, this, this.onMoreBtn);
         this._next.off(Laya.Event.CLICK, this, this.onNextBtn);
         this._onceagain.off(Laya.Event.CLICK, this, this.onOnceagain);
+        this.sangetbtn.off(Laya.Event.CLICK, this, this.onSanGetClick);
         if (WudianMgr_1.default.WudianFlag) {
             CachedWXBannerAd_1.default.hide();
         }
     };
+    GameOverView.prototype.onSanGetClick = function () {
+        var _this = this;
+        this.sangetbtn.visible = false;
+        sessionStorage.setItem("moneytoadd",(parseInt(sessionStorage.getItem("moneytoadd")) * 3));
+    };
     GameOverView.prototype.onMoreBtn = function () {
+        User_1.default.addMoney(parseInt(sessionStorage.getItem("moneytoadd")));
         if (this.onbtnCLick() == true || this.ifbanf == true)
             return;
         this._morebtn.visible = false;
         this._onceagain.visible = false;
         this._next.visible = false;
-        ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameOverView);
         var data = {};
         data.isbtnshow = false;
-        ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.CrazyMoreGame, data);
-        console.log("游戏状态：" + MyGameManger_1.default.state);
-        MyGameManger_1.default.state = MyGameManger_1.StateEnum.weikaiju;
-        EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.ReturnBanner);
+        ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.NewLoadingView);
+        ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GetInterface);
+        ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameOverView);
+        MyGameManger_1.default.GetInstance().OnlodeScene(function () {
+            ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.NewLoadingView);
+            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.MyHomePage);
+        });
+        // console.log("游戏状态：" + MyGameManger_1.default.state);
+         // MyGameManger_1.default.state = MyGameManger_1.StateEnum.weikaiju;
+         // EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.ReturnBanner);
     };
     GameOverView.prototype.onNextBtn = function () {
+        User_1.default.addMoney(parseInt(sessionStorage.getItem("moneytoadd")));
         if (this.onbtnCLick() == true || this.ifbanf == true)
             return;
         this._next.visible = false;
@@ -6380,36 +6156,15 @@ var GameOverView = /** @class */ (function (_super) {
         return false;
     };
     GameOverView.prototype.GoDaQuan = function () {
+        ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.NewLoadingView);
+        ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GetInterface);
         ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameOverView);
-        if (WudianMgr_1.default.WudianFlag) {
-            ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterStartClickGetPrize);
-            ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterStartClickGetPrizeScene, {
-                "场景值": WXAPI_1.default.getLaunchOptionsSync().scene
-            });
-            var data_1 = {};
-            var vl = Math.random(); //0-1的浮点数
-            vl = (Math.floor(vl * 25)); //将小数转为整数
-            data_1.PrizeCount = vl;
-            //狂点逻辑完成后的回调方法
-            data_1.Complete = function () {
-                User_1.default.addMoney(data_1.PrizeCount);
-                console.log("狂点按钮结束"); //在这里写入狂点窗口结束后需要调用的逻辑，例如弹出结算页面
-                //View_lmxg_Mgr.instance.openView(View_lmxg_Def.Skin, true);
-                //View_lmxg_Mgr.instance.close_lmxg_View(View_lmxg_Def.GameOverView);
-                ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameView);
-                MyGameManger_1.default.state = MyGameManger_1.StateEnum.Game;
-                EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.isstart); //开启人物移动
-            };
-            // 完成点击之后获得的奖励数量，依照各项目不同自行实现
-            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.ClickGetPrize, data_1);
-        }
-        else {
-            //View_lmxg_Mgr.instance.openView(View_lmxg_Def.Skin, true);
-            //View_lmxg_Mgr.instance.close_lmxg_View(View_lmxg_Def.GameOverView);
+        MyGameManger_1.default.GetInstance().OnlodeScene(function () {
+            ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.NewLoadingView);
             ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameView);
             MyGameManger_1.default.state = MyGameManger_1.StateEnum.Game;
-            EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.isstart); //开启人物移动
-        }
+            EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.isstart); 
+        });
     };
     return GameOverView;
 }(ViewBase_1.default));
@@ -6442,7 +6197,7 @@ var GameView = /** @class */ (function (_super) {
         _this._level = null;
         _this._progress = null;
         _this.mArmature = null;
-        _this.tishistr = ["Save green & destroy red", ];
+        _this.tishistr = ["Save green & destroy red"];
         _this.strnum = 0;
         return _this;
     }
@@ -6463,6 +6218,8 @@ var GameView = /** @class */ (function (_super) {
         this._pan = this.owner.getChildByName("pan");
         this._pan.visible = false;
         this._pand = this.owner.getChildByName("pandian");
+        this._skipbtn = this.owner.getChildByName("skipbtn");
+        this._homebtn = this.owner.getChildByName("homebtn");
         // //console.log("旋转zhi6："+this._suijiclick.rotation);
         //this.banle=this.owner.getChildByName("banle") as Laya.Clip;
         //this.banle.visible=false;
@@ -6482,7 +6239,7 @@ var GameView = /** @class */ (function (_super) {
             this.mArmature.load(_name, Laya.Handler.create(this, function (res) {
                 //res.lock = true;
             }));
-            Laya.timer.once(3800, this, function () {
+            Laya.timer.once(1000, this, function () {
                 self.panl.visible = false;
                 MyGameManger_1.default.state = MyGameManger_1.StateEnum.Game;
                 self.mArmature.removeSelf();
@@ -6513,6 +6270,8 @@ var GameView = /** @class */ (function (_super) {
         EventMgr_1.default.instance.regEvemt(EventDef_1.EventDef.DieOne, this, this.Progress);
         this._pand.on(Laya.Event.MOUSE_DOWN, this, this.Mosedown);
         this._pand.on(Laya.Event.MOUSE_UP, this, this.Moseup);
+        this._skipbtn.on(Laya.Event.CLICK, this, this.onSkipBtn);
+        this._homebtn.on(Laya.Event.CLICK, this, this.onHomeBtn);
     };
     GameView.prototype.Mosedown = function () {
         EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.onMoDown);
@@ -6520,12 +6279,37 @@ var GameView = /** @class */ (function (_super) {
     GameView.prototype.Moseup = function () {
         EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.onMoUp);
     };
+
     GameView.prototype.removeEvent = function () {
         EventMgr_1.default.instance.removeEvent(EventDef_1.EventDef.Bannle, this, this.onShowBannler); //注册点击事件
         EventMgr_1.default.instance.removeEvent(EventDef_1.EventDef.GameOver, this, this.GameOver);
         EventMgr_1.default.instance.removeEvent(EventDef_1.EventDef.DieOne, this, this.Progress);
         this._pand.off(Laya.Event.MOUSE_DOWN, this, this.Mosedown);
         this._pand.off(Laya.Event.MOUSE_UP, this, this.Moseup);
+        this._skipbtn.off(Laya.Event.CLICK, this, this.onskipbtn);
+        this._homebtn.off(Laya.Event.CLICK, this, this.onhomebtn);
+    };
+    GameView.prototype.onHomeBtn = function () {
+        ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.NewLoadingView);
+        ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameView);
+        MyGameManger_1.default.GetInstance().OnlodeScene(function () {
+            ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.NewLoadingView);
+            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.MyHomePage);
+        });
+    };
+    GameView.prototype.onSkipBtn = function () {
+        ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.NewLoadingView);
+        ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameView);
+        User_1.default.setLeveNum(1);
+        GameMgr_1.default._guanqiapz = "";
+        GameMgr_1.default.getInstance().saveGameData();
+        GameMgr_1.default.hhanum++;
+        MyGameManger_1.default.GetInstance().OnlodeScene(function () {
+            ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.NewLoadingView);
+            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameView);
+            MyGameManger_1.default.state = MyGameManger_1.StateEnum.Game;
+            EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.isstart); 
+        });
     };
     /**
      * 游戏结束
@@ -6538,9 +6322,9 @@ var GameView = /** @class */ (function (_super) {
             data_1.isbtnshow = true;
             GameMgr_1.default.winfalag = false;
             Laya.timer.once(3600, this, function () {
-                ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.CrazyMoreGame, data_1);
-                //View_lmxg_Mgr.instance.openView(View_lmxg_Def.GameOverView,date);
-                ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameView);
+                    ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameView);
+                    ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GetInterface);
+                    setTimeout(()=>{ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameOverView);},500);
             });
         }
     };
@@ -6567,9 +6351,10 @@ var GameView = /** @class */ (function (_super) {
                     GameMgr_1.default._guanqiapz = "";
                     GameMgr_1.default.getInstance().saveGameData();
                     GameMgr_1.default.hhanum++;
-                    //View_lmxg_Mgr.instance.openView(View_lmxg_Def.GameOverView,data);
-                    ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.CrazyMoreGame, data);
+                    //View_lmxg_Mgr.instance.openView(View_lmxg_Def.GameOverView,data); 
                     ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GameView);
+                    ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GetInterface);
+                    setTimeout(()=>{ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameOverView);},500);
                 });
             }
         }
@@ -6607,22 +6392,24 @@ var GetInterfaceView = /** @class */ (function (_super) {
         this.jinbinum = 0;
         this._my = this.owner;
         this.getbtn = this._my.getChildByName("Getbtn");
-        this.sangetbtn = this._my.getChildByName("sanGetbtn");
         this.jinbishi = this._my.getChildByName("jinbi");
         this.lvle = this.owner.getChildByName("guan");
         this.lvle.text = User_1.default.getLeveNum().toString();
+        this.lvle.visible = false;
         this.getbtn.visible = false;
         if (GameMgr_1.default.winfalag) {
             this.jinbinum = 20;
+            sessionStorage.setItem("moneytoadd",this.jinbinum);
             this.lvle.text = (User_1.default.getLeveNum() - 1).toString();
             this.jinbishi.text = (this.jinbinum).toString();
         }
-        this.shipinimg = this.sangetbtn.getChildByName("ship");
-        var isxian = AppSwitchConfig_1.default.getInstance().getAppSwitchData().shipintubiao;
-        if (isxian == 0) {
-            this.shipinimg.visible = false;
+        else{
+            this.jinbishi.visible = false;
         }
         ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterGameComplateView);
+    };
+    GetInterfaceView.prototype.onUpdate = function () {
+            this.jinbishi.text = (parseInt(sessionStorage.getItem("moneytoadd"))).toString();
     };
     GetInterfaceView.prototype.addEvent = function () {
         var timera = AppSwitchConfig_1.default.getInstance().getAppSwitchData().btnDelayTime;
@@ -6630,40 +6417,15 @@ var GetInterfaceView = /** @class */ (function (_super) {
             this.getbtn.visible = true;
         });
         this.getbtn.on(Laya.Event.CLICK, this, this.onGetClick);
-        this.sangetbtn.on(Laya.Event.CLICK, this, this.onSanGetClick);
     };
     GetInterfaceView.prototype.removeEvent = function () {
         this.getbtn.off(Laya.Event.CLICK, this, this.onGetClick);
-        this.sangetbtn.off(Laya.Event.CLICK, this, this.onSanGetClick);
     };
     GetInterfaceView.prototype.onGetClick = function () {
         this.getbtn.visible = false;
-        this.sangetbtn.visible = false;
         User_1.default.addMoney(this.jinbinum);
         ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GetInterface);
         ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameOverView);
-    };
-    GetInterfaceView.prototype.onSanGetClick = function () {
-        var _this = this;
-        this.getbtn.visible = false;
-        this.sangetbtn.visible = false;
-        WXAPI_1.default.showRewardedVideoAd(function (res) {
-            if (res == true) //观看视频成功后
-             {
-                User_1.default.addMoney(_this.jinbinum * 3);
-                ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GetInterface);
-                ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameOverView);
-            }
-            else {
-                User_1.default.addMoney(_this.jinbinum);
-                ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GetInterface);
-                ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameOverView);
-            }
-        }, function (res2) {
-            User_1.default.addMoney(_this.jinbinum);
-            ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.GetInterface);
-            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameOverView);
-        });
     };
     return GetInterfaceView;
 }(ViewBase_1.default));
@@ -6682,57 +6444,57 @@ var LoadingView = /** @class */ (function (_super) {
         return _this;
     }
     LoadingView.prototype.onAwake = function () {
-        this._bg = this.owner.getChildByName("Bg");
-        this._processBarBg = this._bg.getChildByName("processBarBg");
-        this.jiazaiimg = this._bg.getChildByName("jiazai");
-        if (this._processBarBg) {
-            this._processBar = this._processBarBg.getChildByName("processBar");
-            this._processWidth = this._processBar.width;
-        }
-        else {
-            this._processBar = this._bg.getChildByName("processBar");
-            this._processWidth = Laya.stage.width;
-        }
-        var aspectRatio = Laya.stage.width / Laya.stage.height;
-        if (aspectRatio < 0.5) {
-            this._processBarBg.top = 1200;
-            this.jiazaiimg.top = 1130;
-        }
-        this.bilv = (Laya.stage.width / this._bg.width) * this._bg.height;
-        ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterLoading);
+         this._bg = this.owner.getChildByName("Bg");
+        // this._processBarBg = this._bg.getChildByName("processBarBg");
+        // this.jiazaiimg = this._bg.getChildByName("jiazai");
+        // if (this._processBarBg) {
+        //     this._processBar = this._processBarBg.getChildByName("processBar");
+        //     this._processWidth = this._processBar.width;
+        // }
+        // else {
+        //     this._processBar = this._bg.getChildByName("processBar");
+        //     this._processWidth = Laya.stage.width;
+        // }
+        // var aspectRatio = Laya.stage.width / Laya.stage.height;
+        // if (aspectRatio < 0.5) {
+        //     this._processBarBg.top = 1200;
+        //     this.jiazaiimg.top = 1130;
+        // }
+        // this.bilv = (Laya.stage.width / this._bg.width) * this._bg.height;
+        // ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterLoading);
     };
     LoadingView.prototype.onEnable = function () {
-        _super.prototype.onEnable.call(this);
-        this._processBar.width = 0;
+        // _super.prototype.onEnable.call(this);
+        // this._processBar.width = 0;
     };
     LoadingView.prototype.addEvent = function () {
-        _super.prototype.addEvent.call(this);
+        //_super.prototype.addEvent.call(this);
     };
     LoadingView.prototype.removeEvent = function () {
-        _super.prototype.removeEvent.call(this);
+        //_super.prototype.removeEvent.call(this);
     };
     LoadingView.prototype.onUpdate = function () {
-        this._bg.width = Laya.stage.width;
-        //this._bg.height = Laya.stage.height;
-        this._bg.height = this.bilv;
-        if (!this._processBarBg) {
-            this._processWidth = Laya.stage.width;
-        }
-        if (this._processBar.width < this._processBarBg.width) {
-            this._processBar.width += 13 * Laya.timer.delta / 100;
-        }
+        // this._bg.width = Laya.stage.width;
+        // //this._bg.height = Laya.stage.height;
+        // this._bg.height = this.bilv;
+        // if (!this._processBarBg) {
+        //     this._processWidth = Laya.stage.width;
+        // }
+        // if (this._processBar.width < this._processBarBg.width) {
+        //     this._processBar.width += 13 * Laya.timer.delta / 100;
+        // }
     };
     LoadingView.prototype.setProcess = function (process) {
-        if (process < 0)
-            process = 0;
-        if (process > 1)
-            process = 1;
-        var width = this._processWidth * process;
-        if (width < 1)
-            width = 1;
-        if (width > this._processBar.width) {
-            this._processBar.width = width;
-        }
+        // if (process < 0)
+        //     process = 0;
+        // if (process > 1)
+        //     process = 1;
+        // var width = this._processWidth * process;
+        // if (width < 1)
+        //     width = 1;
+        // if (width > this._processBar.width) {
+        //     this._processBar.width = width;
+        // }
     };
     return LoadingView;
 }(ViewBase_1.default));
@@ -6767,6 +6529,7 @@ var MyHomePage = /** @class */ (function (_super) {
     ; //控制轮播广告的父节点
     MyHomePage.prototype.onAwake = function () {
         this._startclick = this.owner.getChildByName("BottomZone").getChildByName("AutoZone").getChildByName("dianjitu");
+        this._startclick.visible = false;
         this._setbutton = this.owner.getChildByName("setbutton");
         this._moregame = this.owner.getChildByName("BottomZone").getChildByName("AutoZone").getChildByName("moregame");
         this._suijibtn = this.owner.getChildByName("nullspace");
@@ -6787,8 +6550,8 @@ var MyHomePage = /** @class */ (function (_super) {
     MyHomePage.prototype.addEvent = function () {
         var suijiad = AppSwitchConfig_1.default.getInstance().getAppSwitchData().indexAdClick;
         ShareAd_1.default.Random_lmxg_Jump(suijiad);
-        this._moregame.on(Laya.Event.CLICK, this, this.onMoreClick);
-        this._startclick.on(Laya.Event.CLICK, this, this.onstartclick);
+        this._moregame.on(Laya.Event.CLICK, this, this.onstartclick);
+        //this._startclick.on(Laya.Event.CLICK, this, this.onstartclick);
         this._suijibtn.on(Laya.Event.CLICK, this, this.onSuiJiClick);
         EventMgr_1.default.instance.regEvemt(EventDef_1.EventDef.Bannle, this, this.onShowBannler); //注册点击事件
         ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterMainView);
@@ -6819,7 +6582,7 @@ var MyHomePage = /** @class */ (function (_super) {
     MyHomePage.prototype.onstartclick = function () {
         //this.closeView();
         //View_lmxg_Mgr.instance.openView(View_lmxg_Def.Skin,true);
-        ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.ClickGameStart);
+        //ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.ClickGameStart);
         this.GoDaQuan();
     };
     MyHomePage.prototype.onMoreClick = function () {
@@ -6858,32 +6621,10 @@ var MyHomePage = /** @class */ (function (_super) {
         }
     };
     MyHomePage.prototype.GoDaQuan = function () {
-        ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.MyHomePage);
-        if (WudianMgr_1.default.WudianFlag) {
-            ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterStartClickGetPrize);
-            ALD_1.default.aldSendOnlySingleReport(ALD_1.ALDEventDef.EnterStartClickGetPrizeScene, {
-                "场景值": WXAPI_1.default.getLaunchOptionsSync().scene
-            });
-            var data_1 = {};
-            var vl = Math.random(); //0-1的浮点数
-            vl = (Math.floor(vl * 25)); //将小数转为整数
-            data_1.PrizeCount = vl;
-            //狂点逻辑完成后的回调方法
-            data_1.Complete = function () {
-                User_1.default.addMoney(data_1.PrizeCount);
-                console.log("狂点按钮结束"); //在这里写入狂点窗口结束后需要调用的逻辑，例如弹出结算页面
-                ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.Skin, true);
-                EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.isstart); //开启人物移动
-                MyGameManger_1.default.state = MyGameManger_1.StateEnum.Game;
-            };
-            // 完成点击之后获得的奖励数量，依照各项目不同自行实现
-            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.ClickGetPrize, data_1);
-        }
-        else {
-            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.Skin, true);
+            ViewMgr_1.default.instance.close_lmxg_View(ViewMgr_1.View_lmxg_Def.MyHomePage);
+            ViewMgr_1.default.instance.openView(ViewMgr_1.View_lmxg_Def.GameView);
             EventMgr_1.default.instance.dispatch(EventDef_1.EventDef.isstart); //开启人物移动
             MyGameManger_1.default.state = MyGameManger_1.StateEnum.Game;
-        }
     };
     return MyHomePage;
 }(ViewBase_1.default));
@@ -6928,6 +6669,9 @@ var SkinView = /** @class */ (function (_super) {
         this.start.visible = false;
         this._pifustr.visible = false;
         this.falg = false;
+        this.owner.getChildByName("bgjin").visible =true;
+        this._jinbi = this.owner.getChildByName("bgjin").getChildByName("jinText");
+        this._jinbi.text = User_1.default.getMoney().toString();
         MyGameManger_1.default.ShowRen(true);
         Laya.timer.once(300, this, function () {
             this.getskins();
@@ -7061,40 +6805,40 @@ var SkinView = /** @class */ (function (_super) {
         var a = "";
         switch (xu) {
             case 0:
-                a = "Captain blue star";
+                a = "Captain Blue Star";
                 break;
             case 1:
-                a = "Pink tights";
+                a = "Pink Tights";
                 break;
             case 2:
-                a = "Gentleman's clothing";
+                a = "Gentleman's Clothing";
                 break;
             case 3:
-                a = "Beach leisure";
+                a = "Beach Leisure";
                 break;
             case 4:
-                a = "Space suit";
+                a = "Space Suit";
                 break;
             case 5:
-                a = "Suits & leather shoes";
+                a = "Suits & Leather Shoes";
                 break;
             case 6:
-                a = "Little bratX";
+                a = "Little BratX";
                 break;
             case 7:
                 a = "Malio";
                 break;
             case 8:
-                a = "Mandarin jacket";
+                a = "Mandarin Kacket";
                 break;
             case 9:
-                a = "Little kid V";
+                a = "Little Kid V";
                 break;
             case 10:
                 a = "Anaconda Commando";
                 break;
             default:
-                a = "Captain blue star";
+                a = "Captain Blue Star";
                 break;
         }
         return a;
@@ -7489,7 +7233,8 @@ var ui;
                 _super.prototype.createChildren.call(this);
                 this.createView(LoadingUI.uiView);
             };
-            LoadingUI.uiView = { "type": "Scene", "props": { "zOrder": 99, "width": 750, "top": 0, "right": 0, "left": 0, "height": 1334, "bottom": 0 }, "compId": 2, "child": [{ "type": "Clip", "props": { "width": 750, "top": 0, "skin": "Loading/画板 1.jpg", "name": "Bg", "left": 0, "height": 1999.6 }, "compId": 6, "child": [{ "type": "Clip", "props": { "top": 1000, "skin": "Loading/1_0003_组-61.png", "right": 100, "pivotY": 22, "name": "processBarBg", "left": 100, "height": 64, "sizeGrid": "16,29,26,22" }, "compId": 5, "child": [{ "type": "Clip", "props": { "y": 4, "x": -97, "width": 0, "skin": "Loading/1_0001_图层-920-拷贝-2.png", "name": "processBar", "left": 3, "height": 42, "sizeGrid": "11,23,16,23" }, "compId": 9 }] }, { "type": "Image", "props": { "zOrder": 10, "x": 296, "top": 930, "skin": "Loading/jiazai.png", "name": "jiazai" }, "compId": 15 }] }, { "type": "Script", "props": { "y": 0, "x": 0, "runtime": "View/LoadingView/LoadingView.ts" }, "compId": 7 }], "loadList": ["Loading/画板 1.jpg", "Loading/1_0003_组-61.png", "Loading/1_0001_图层-920-拷贝-2.png", "Loading/jiazai.png"], "loadList3D": [] };
+            //LoadingUI.uiView = { "type": "Scene", "props": { "zOrder": 99, "width": 750, "top": 0, "right": 0, "left": 0, "height": 1334, "bottom": 0 }, "compId": 2, "child": [{ "type": "Clip", "props": { "width": 750, "top": 0, "skin": "Loading/画板 1.jpg", "name": "Bg", "left": 0, "height": 1999.6 }, "compId": 6, "child": [{ "type": "Clip", "props": { "top": 1000, "skin": "Loading/1_0003_组-61.png", "right": 100, "pivotY": 22, "name": "processBarBg", "left": 100, "height": 64, "sizeGrid": "16,29,26,22" }, "compId": 5, "child": [{ "type": "Clip", "props": { "y": 4, "x": -97, "width": 0, "skin": "Loading/1_0001_图层-920-拷贝-2.png", "name": "processBar", "left": 3, "height": 42, "sizeGrid": "11,23,16,23" }, "compId": 9 }] }, { "type": "Image", "props": { "zOrder": 10, "x": 296, "top": 930, "skin": "Loading/jiazai.png", "name": "jiazai" }, "compId": 15 }] }, { "type": "Script", "props": { "y": 0, "x": 0, "runtime": "View/LoadingView/LoadingView.ts" }, "compId": 7 }], "loadList": ["Loading/画板 1.jpg", "Loading/1_0003_组-61.png", "Loading/1_0001_图层-920-拷贝-2.png", "Loading/jiazai.png"], "loadList3D": [] };
+            LoadingUI.uiView = {};
             return LoadingUI;
         }(Scene));
         View.LoadingUI = LoadingUI;
