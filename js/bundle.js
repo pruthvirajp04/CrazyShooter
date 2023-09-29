@@ -5298,11 +5298,15 @@ var UserGameData = /** @class */ (function () {
         if(localStorage.getItem("CS_Level")){
             this.levelNum = parseInt(localStorage.getItem("CS_Level"));
         }
-        else this.moneyNum = 1; //当前关卡
+        else {this.levelNum = 1; 
+            localStorage.setItem("CS_Level",1);
+        }//当前关卡
         if(localStorage.getItem("CS_Money")){
             this.moneyNum = parseInt(localStorage.getItem("CS_Money"));
         }
-        else this.moneyNum = 10000; //金币数量
+        else {this.moneyNum = 0;
+            localStorage.setItem("CS_Money",0);
+        } //金币数量
         this.crystalNum = 0; //钻石数量
         this.SkinkNum = 0; //当前玩家的皮肤 
         this.SkinkArrJ = "A"; //当前玩家解锁到的皮肤
@@ -5322,11 +5326,16 @@ var User = /** @class */ (function (_super) {
         if(localStorage.getItem("CS_Level")){
             User._gameData.levelNum = parseInt(localStorage.getItem("CS_Level"));
         }
-        else this.moneyNum = 1; //当前关卡
+        else {
+            this.levelNum = 1;
+            localStorage.setItem("CS_Level",1);
+        } //当前关卡
         if(localStorage.getItem("CS_Money")){
            User._gameData.moneyNum = parseInt(localStorage.getItem("CS_Money"));
         }
-        else this.moneyNum = 10000;
+        else {this.moneyNum = 0;
+            localStorage.setItem("CS_Money",0);
+        }
         User._gameData.crystalNum = 10000000;
         User._gameData.SkinkNum = 0;
         User._gameData.SkinkArrJ = "A";
@@ -5411,7 +5420,7 @@ var User = /** @class */ (function (_super) {
         localStorage.setItem("CS_Money",User._gameData.moneyNum);
     };
     User.getMoney = function () {
-        var money = 10000;
+        var money = 0;
         if(localStorage.getItem("CS_Money")){
             money = parseInt(localStorage.getItem("CS_Money"));
         }
