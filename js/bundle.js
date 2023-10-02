@@ -1069,7 +1069,9 @@ var View_lmxg_Def;
     View_lmxg_Def["ClickGetHezi"] = "subRes/View/ClickGetHezi.json";
     View_lmxg_Def["MyHomePage"] = "subRes/View/MyHomePage.json";
     View_lmxg_Def["GameView"] = "subRes/View/GameView.json";
-    View_lmxg_Def["GameOverView"] = "subRes/View/GameOver.json";
+    if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) 
+    View_lmxg_Def["GameOverView"] = "subRes/View/GameOverIOS.json";
+    else View_lmxg_Def["GameOverView"] = "subRes/View/GameOver.json";
     View_lmxg_Def["Skin"] = "subRes/View/Skin.json";
     View_lmxg_Def["CrazyMoreGame"] = "subRes/View/CrazyMoreGame.json";
     View_lmxg_Def["GetInterface"] = "subRes/View/GetInterface.json";
